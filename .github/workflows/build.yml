@@ -23,14 +23,17 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Install dependencies
-        run: npm ci
+        run: pnpm i
 
       - name: Nitro build
-        run: npm run build
+        run: pnpm run build
 
       - name: Install pkg
-        run: npm install -g pkg
+        run: pnpm install -g pkg
 
       - name: Package server with pkg
         run: |
