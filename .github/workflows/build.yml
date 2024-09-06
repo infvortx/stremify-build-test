@@ -13,6 +13,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [18.x]
+        pkg-platform:
+          - linux
+          - win
+          - macos
     
     steps:
       - name: Checkout repository
@@ -37,7 +41,7 @@ jobs:
 
       - name: Package server with pkg
         run: |
-          pkg .output/server/index.mjs --targets node18-${{ matrix.os }}-x64 --output build/output-${{ matrix.os }}
+          pkg .output/server/index.mjs --targets node18-${{ matrix.pkg-platform }}-x64 --output build/output-${{ matrix.pkg-platform }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
