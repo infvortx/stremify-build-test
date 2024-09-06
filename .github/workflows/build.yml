@@ -33,7 +33,7 @@ jobs:
         run: pnpm run build
 
       - name: Install pkg
-        run: pnpm install -g pkg
+        run: npm install -g pkg
 
       - name: Package server with pkg
         run: |
