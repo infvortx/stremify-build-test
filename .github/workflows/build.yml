@@ -13,10 +13,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [18.x]
-        pkg-platform:
-          - linux
-          - win
-          - macos
     
     steps:
       - name: Checkout repository
