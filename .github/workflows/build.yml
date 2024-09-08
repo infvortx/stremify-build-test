@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
         node-version: [18.x]
     
     steps:
@@ -31,41 +31,55 @@ jobs:
 
       - name: Nitro build
         run: pnpm run build
+      
+      - name: Install bun
+        run: npm install -g bun
 
-      - name: Install pkg
-        run: npm install -g pkg
-
-      - name: Package for Linux
-        if: matrix.os == 'ubuntu-latest'
+      - name: Package for Linux (x64)
         run: |
-          pkg .output/server/index.mjs --targets node18-linux-x64 --output build/output-linux
-
-      - name: Package for macOS
-        if: matrix.os == 'macos-latest'
+          bun build ./.output/server/index.mjs --target=bun-linux-x64 --compile --outfile ./build/output-linux-x64
+      
+      - name: Package for Linux (arm64)
         run: |
-          pkg .output/server/index.mjs --targets node18-macos-x64 --output build/output-macos
+          bun build ./.output/server/index.mjs --target=bun-linux-arm64 --compile --outfile ./build/output-linux-arm64
+
+      - name: Package for macOS (arm64)
+        run: |
+          bun build ./.output/server/index.mjs --target=bun-darwin-arm64 --compile --outfile ./build/output-macos-arm64
+
+      - name: Package for macOS (Intel)
+        run: |
+          bun build ./.output/server/index.mjs --target=bun-darwin-x64 --compile --outfile ./build/output-macos-x64
 
       - name: Package for Windows
-        if: matrix.os == 'windows-latest'
         run: |
           pkg .output/server/index.mjs --targets node18-win-x64 --output build/output-windows
 
-      - name: Upload artifacts for Linux
-        if: matrix.os == 'ubuntu-latest'
+      - name: Upload artifacts for Linux (x64)
         uses: actions/upload-artifact@v3
         with:
-          name: build-linux
-          path: build/output-linux
+          name: build-linux-x64
+          path: ./build/output-linux-x64
 
-      - name: Upload artifacts for macOS
-        if: matrix.os == 'macos-latest'
+      - name: Upload artifacts for Linux (arm64)
         uses: actions/upload-artifact@v3
         with:
-          name: build-macos
-          path: build/output-macos
+          name: build-linux-x64
+          path: ./build/output-linux-arm64
+
+      - name: Upload artifacts for macOS (arm64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-macos-arm64
+          path: build/output-macos-arm64
+
+      - name: Upload artifacts for macOS (x64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-macos-x64
+          path: build/output-macos-x64
 
       - name: Upload artifacts for Windows
-        if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v3
         with:
           name: build-windows
