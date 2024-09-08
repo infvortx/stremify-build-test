@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [macos-latest]
         node-version: [18.x]
     
     steps:
@@ -32,65 +32,22 @@ jobs:
       - name: Nitro build
         run: pnpm run build
 
-      - name: Install pkg
-        run: npm install -g bun
+      - name: Install nexe
+        run: npm install -g nexe
 
-      - name: Package for Linux (x64)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          bun build ./.output/server/index.mjs --target=bun-linux-x64 --compile --minify --outfile ./build/output-linux-x64
-          
-      - name: Package for Linux (arm64)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          bun build ./.output/server/index.mjs --target=bun-linux-arm64 --compile --minify --outfile ./build/output-linux-arm64
-
-      - name: Package for macOS (Intel)
+      - name: Clone node (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          bun build ./.output/server/index.mjs --target=bun-darwin-x64 --compile --minify --outfile ./build/output-macos-x64
-
-      - name: Package for macOS (arm64)
+          cp $(which node) ./node
+      
+      - name: Package for macOS
         if: matrix.os == 'macos-latest'
         run: |
-          bun build ./.output/server/index.mjs --target=bun-darwin-arm64 --compile --minify --outfile ./build/output-macos-arm64
+          npx nexe -i ./.output/server/index.mjs --asset ./node -output ./build/macos
 
-      - name: Package for Windows
-        if: matrix.os == 'windows-latest'
-        run: |
-          bun build ./.output/server/index.mjs --target=bun-windows-x64 --compile --minify --outfile ./build/output-windows
-
-      - name: Upload artifacts for Linux (x64)
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-linux-x64
-          path: ./build/output-linux-x64
-
-      - name: Upload artifacts for Linux (arm64)
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-linux-arm64
-          path: ./build/output-linux-arm64
-
-      - name: Upload artifacts for macOS (x64)
+      - name: Upload artifacts for macOS
         if: matrix.os == 'macos-latest'
         uses: actions/upload-artifact@v3
         with:
           name: build-macos-x64
-          path: ./build/output-macos-x64
-
-      - name: Upload artifacts for macOS (arm64)
-        if: matrix.os == 'macos-latest'
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-macos-arm64
-          path: ./build/output-macos-arm64
-
-      - name: Upload artifacts for Windows
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-windows
-          path: ./build/output-windows.exe
+          path: ./build/macos
