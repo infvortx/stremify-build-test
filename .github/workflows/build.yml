@@ -33,7 +33,7 @@ jobs:
         run: pnpm run build
 
       - name: Install pkg
-        run: npm install -g pkg
+        run: npm install -g bun
 
       - name: Package for Linux
         if: matrix.os == 'ubuntu-latest'
