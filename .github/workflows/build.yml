@@ -29,7 +29,7 @@ jobs:
         run: bun build .output/server/index.mjs --compile --outfile ./build/macos
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-macos-x64
           path: ./build/macos
