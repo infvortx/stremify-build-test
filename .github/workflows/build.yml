@@ -34,10 +34,13 @@ jobs:
       - name: Package as SEA
         run: |
           node --experimental-sea-config sea-config.json
-          mv app.sea ./stremify
+          cp "$(command -v node)" sea-binary
+          npx postject sea-binary NODE_SEA_BLOB app.sea --compression brotli
+          chmod +x sea-binary
+          mv sea-binary ./stremify-macos
 
       - name: Upload artifact for macOS
         uses: actions/upload-artifact@v4
         with:
           name: build-macos-x64
-          path: ./stremify
+          path: ./stremify-macos
