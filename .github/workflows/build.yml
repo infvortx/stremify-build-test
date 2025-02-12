@@ -31,6 +31,9 @@ jobs:
       - name: Nitro build
         run: pnpm run build
 
+      - name: Build as CommonJS
+        run: npx esbuild ./.output/server/index.mjs --bundle --platform=node --outfile=./.output/server/index.cjs --external:sleep
+
       - name: Package as SEA
         run: |
           node --experimental-sea-config sea-config.json
