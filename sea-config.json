@@ -1,4 +1,4 @@
 {
-  "main": "./.output/server/index.mjs",
+  "main": "./.output/server/index.cjs",
   "output": "app.sea"
 }
