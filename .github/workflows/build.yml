@@ -11,7 +11,8 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [18.x]
+        architecture: [x64, arm64]
     
     steps:
       - name: Checkout repository
@@ -34,16 +35,14 @@ jobs:
       - name: Build as CommonJS
         run: npx esbuild ./.output/server/index.mjs --bundle --platform=node --outfile=./.output/server/index.cjs --external:sleep
 
-      - name: Package as SEA
-        run: |
-          node --experimental-sea-config sea-config.json
-          cp "$(command -v node)" sea-binary
-          npx postject sea-binary NODE_SEA_BLOB app.sea --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA
-          chmod +x sea-binary
-          mv sea-binary ./stremify-macos
+      - name: Package with pkg
+        run: npx pkg ./.output/server/index.cjs --targets node18-macos-${{ matrix.architecture }} --output ./stremify-macos-${{ matrix.architecture }}
+
+      - name: Code sign binary
+        run: codesign --sign - --force --deep ./stremify-macos-${{ matrix.architecture }}
 
       - name: Upload artifact for macOS
         uses: actions/upload-artifact@v4
         with:
-          name: build-macos-x64
-          path: ./stremify-macos
+          name: build-macos-${{ matrix.architecture }}
+          path: ./stremify-macos-${{ matrix.architecture }}
