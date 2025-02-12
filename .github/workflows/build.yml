@@ -35,7 +35,7 @@ jobs:
         run: |
           node --experimental-sea-config sea-config.json
           cp "$(command -v node)" sea-binary
-          npx postject sea-binary NODE_SEA_BLOB app.sea --compression brotli
+          npx postject sea-binary NODE_SEA_BLOB app.sea
           chmod +x sea-binary
           mv sea-binary ./stremify-macos
 
